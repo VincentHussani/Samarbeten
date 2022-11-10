@@ -57,7 +57,7 @@ int main(int argc, char **argv)
                     shmp->empty[i % 10] = 1;
                     sem_post(sem_id2);
 
-                    int t = 100000 * (rand() % 4 + 2);
+                    int t = 10000 * (rand() % 4 + 2);
                     i = i % 10;
                     usleep(t);
                     found = 1;
@@ -98,7 +98,7 @@ int main(int argc, char **argv)
                     printf("Received %d\n", var2);
                     fflush(stdout);
                     i = i % 10;
-                    int t = 100000 * (rand() % 19 + 2);
+                    int t = 10000 * (rand() % 19 + 2);
                     usleep(t);
                     found = 1;
                 }
