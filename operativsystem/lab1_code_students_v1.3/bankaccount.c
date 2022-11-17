@@ -8,13 +8,16 @@ double bankAccountBalance = 0;
 
 void deposit(double amount)
 {
+    // Locks around one of the two critical regions,removes the risk of a datarace to occur
     pthread_mutex_lock(&lock);
     bankAccountBalance += amount;
     pthread_mutex_unlock(&lock);
+    // in order to allow other threads to work once the transaction is done, the lock is removed
 }
 
 void withdraw(double amount)
 {
+    // Withdraw is the second critical region which requires a lock
     pthread_mutex_lock(&lock);
     bankAccountBalance -= amount;
     pthread_mutex_unlock(&lock);
@@ -49,7 +52,7 @@ int main(int argc, char **argv)
 {
     pthread_t *children;
     unsigned long id = 0;
-    unsigned long nThreads = 128;
+    unsigned long nThreads = 24;
     if (argc > 1)
         nThreads = atoi(argv[1]);
     children = malloc(nThreads * sizeof(pthread_t));

@@ -10,8 +10,7 @@
 struct my_msgbuf
 {
    long mtype;
-   int num;
-   char bruh[200];
+   int mtext;
 };
 
 int main(void)
@@ -37,12 +36,17 @@ int main(void)
    for (;;)
    { /* normally receiving never ends but just to make conclusion */
       /* this program ends with string of end */
-      if (msgrcv(msqid, &buf, sizeof(int), 0, 0) == -1)
+      if (msgrcv(msqid, &buf, sizeof(buf.mtext), 0, 0) == -1)
       {
          perror("msgrcv");
          exit(1);
       }
-      printf("recvd: \"%d\"\n", buf.num);
+      printf("recvd: \"%d\"\n", buf.mtext);
+      fflush(stdout);
+      // Once toend reaches 49, it has received all 50 messages and can stop looking for messages.
+      toend = toend + 1;
+      if (toend == 49)
+         break;
    }
    printf("message queue: done receiving messages.\n");
    system("rm msgq.txt");

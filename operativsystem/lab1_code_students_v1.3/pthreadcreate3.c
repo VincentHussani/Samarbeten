@@ -11,9 +11,11 @@ struct threadArgs
 
 void *child(void *params)
 {
+	// unpacking the args into a usable datatype
 	struct threadArgs *args = (struct threadArgs *)params;
 	unsigned int childID = args->id;
 	unsigned int numThreads = args->numThreads;
+	// The squaring of the ID happens here (We added 1 to the childID to make it base 1 instead of 0)
 	args->squaredId = (childID + 1) * (childID + 1);
 	printf("Greetings from child #%u of %u\n", childID + 1, numThreads);
 }
@@ -42,6 +44,7 @@ int main(int argc, char **argv)
 	for (unsigned int id = 0; id < numThreads; id++)
 	{
 		pthread_join(children[id], NULL);
+		// Once the children have joined back to the main thread, their squaredID is printed
 		printf("%d\n", args[id].squaredId);
 	}
 	free(args);		// deallocate args vector

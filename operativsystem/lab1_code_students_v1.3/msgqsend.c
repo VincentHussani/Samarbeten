@@ -5,17 +5,21 @@
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/msg.h>
-
+#include <time.h>
+#include <unistd.h>
 #define PERMS 0644
-struct my_msgbuf
+#define INT_MAX 60
+#undef RAND_MAX
+#define RAND_MAX INT_MAX
+typedef struct my_msgbuf
 {
    long mtype;
-   int num;
-   char bruh[200]
-};
+   int mtext;
+} my_msgbuf;
 
 int main(void)
 {
+   srand(time(0));
    struct my_msgbuf buf;
    int msqid;
    int len;
@@ -34,24 +38,25 @@ int main(void)
       exit(1);
    }
    printf("message queue: ready to send messages.\n");
-   printf("Enter lines of text, ^D to quit:\n");
-   buf.num = 5;
+   sleep(7);
    buf.mtype = 1; /* we don't really care in this case */
-   len = sizeof(int);
-   while (fgets(buf.bruh, sizeof buf.bruh, stdin) != NULL)
-   {
-      /* remove newline at end, if it exists */
-      if (msgsnd(msqid, &buf.num, len, 0) == -1) /* +1 for '\0' */
-         perror("msgsnd");
-   }
-   if (msgsnd(msqid, &buf.num, len, 0) == -1) /* +1 for '\0' */
-      perror("msgsnd");
 
-   if (msgctl(msqid, IPC_RMID, NULL) == -1)
+   for (int i = 0; i < 50; i++) // A forloop that sends one message at a time
    {
-      perror("msgctl");
-      exit(1);
+      buf.mtext = rand() % (RAND_MAX + 1);
+
+      if (msgsnd(msqid, &buf, sizeof(buf.mtext), 0) == -1) // Does the actual sending of the message
+         perror("msgsnd");
+      printf("sending: %d \n", buf.mtext);
+      fflush(stdout);
+      // Once i has reached 49, all messages have been sent and thus the if statement can perform the other half of its condition
+      if (i == 49 && msgctl(msqid, IPC_RMID, NULL) == -1)
+      {
+         perror("msgctl");
+         exit(1);
+      }
    }
+
    printf("message queue: done sending messages.\n");
    return 0;
 }
