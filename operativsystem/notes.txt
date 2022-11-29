@@ -1,0 +1,34 @@
+HM3:How much dynamic memory is allocated in the test1 program (i.e., how large is struct link)? 
+A: 4*(32*1024)² bytes
+
+HM3:How much data is written to the temporary file /tmp/file1.txt in each iteration of the program test2?
+A: 4*(16*1024)² bytes
+HM4:In which output columns of vmstat can you find the amount of memory a process uses, the number of swap ins and
+outs, and the number of I/O blocks read and written? 
+A: memoryusage: the difference between free, active swaps: si so blocks: bi bo
+
+HM4: Where in the output from top do you find how much cpu time and cpu utilization a process is using?
+A: cputime: TIME+ , cpu utilisation: %CPU
+
+
+T1: Execute the test program test1. How much memory does the program use? Does it correspond to your answer in Home Assignment?
+A: The program uses roughly 4244732 bytes and does not correspond to the answer in homework 3. 
+
+T1:What is the cpu utilization when executing the test1 program? Which type of program is test1?
+A: THe program is CPU bound and utilizes 100% of the cpu
+
+T1:Execute the test program test2. How much memory does the program use? How many blocks are written out by the program? How does it correspond to your answer in Home Assignment 3?
+A: no change in memory usage was detected, 1048792 blocks were written out in each iteration which is 536981504 bytes. The difference is roughly by a factor of 2 (the answer is twice as large as the measured value)
+T1: What is the cpu utilization when executing the test2 program? Which type of program can we consider test2 to be?
+56% cpu utilisation and the program can be considered to be i/o bound.
+
+
+T2: What is the difference between them in terms of how they execute the test programs?
+A: Run1 executes sequentially meanwhile run2 executes test1s and test2s paralell
+
+T2:Execute the script run1 and measure the execution time. Study the cpu utilization using top during the execution. How long time did it take to execute the script and how did the cpu utilization vary?
+A: 1 m 15s was the execution time, the program maintained 100 cpu utilisation whilst executing test 1 and dropped to 50% when executing test 2. During the execution of test 2 cpu utilisation varied between 56-42% but tended to stay inbetween those values. 
+
+T3: Execute the script run2 and measure the execution time. Study the cpu utilization using top during the execution. How long time did it take to execute the script and how did the cpu utilization vary?
+A: 23 seconds was the execution time. Test1 utilised 100% of the cpu and test 2 varied between 30-45%
+

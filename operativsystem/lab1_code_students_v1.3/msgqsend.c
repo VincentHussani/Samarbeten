@@ -44,19 +44,16 @@ int main(void)
    for (int i = 0; i < 50; i++) // A forloop that sends one message at a time
    {
       buf.mtext = rand() % (RAND_MAX + 1);
-
       if (msgsnd(msqid, &buf, sizeof(buf.mtext), 0) == -1) // Does the actual sending of the message
          perror("msgsnd");
       printf("sending: %d \n", buf.mtext);
       fflush(stdout);
-      // Once i has reached 49, all messages have been sent and thus the if statement can perform the other half of its condition
-      if (i == 49 && msgctl(msqid, IPC_RMID, NULL) == -1)
-      {
-         perror("msgctl");
-         exit(1);
-      }
    }
-
+   if (msgctl(msqid, IPC_RMID, NULL) == -1)
+   {
+      perror("msgctl");
+      exit(1);
+   }
    printf("message queue: done sending messages.\n");
    return 0;
 }
