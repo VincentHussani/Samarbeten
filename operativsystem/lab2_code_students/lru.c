@@ -66,6 +66,7 @@ int main(int argc, char const *argv[])
             pagefault++;
         }
     }
+
     printf("%d pagefaults\n", pagefault);
     return 0;
 }
