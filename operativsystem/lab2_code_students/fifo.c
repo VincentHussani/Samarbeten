@@ -2,32 +2,35 @@
 #include <stdlib.h>
 #include <string.h>
 int main(int argc, char const *argv[])
-
 {
     int pages;
     int size;
-    if (argc != 1)
+
+    if (argc == 4) //If the correct amount of arguments are parsed in, then the program continues as normal
     {
-        char *page_tmp = argv[1];
-        pages = atoi(page_tmp);
-
-        char *size_tmp = argv[2];
-        size = atoi(size_tmp);
+        pages = atoi(argv[1]);//Stores and converts number of pages to an int
+        size = atoi(argv[2]); //Stores and converts page size to an int
     }
+    else
+        exit(1);
 
-    char *file = argv[3];
-    FILE *f = fopen(file, "r");
+
+    FILE *f = fopen(argv[3], "r");
     char line[256];
 
-    int reg[pages];
-    memset(reg, -1, pages * 4);
+
+    int reg[pages]; //Stores the pages currently in use
+    memset(reg, -1, pages * 4); //All slots in reg are set to -1 in order to identify them as empty
     int pagefault = 0;
-    int fifo_counter = 0;
-    while (fgets(line, sizeof(line), f))
+    int fifo_counter = 0; // Is used to store which slot is the oldest entry.
+
+    while (fgets(line, sizeof(line), f))  //While there are rows to be grabbed this loop will continue
     {
-        int row = atoi(line);
+
+        int row = atoi(line); //converts the reference to an int
         int found = 0;
-        int index = row / size;
+
+        int index = row / size; //Gives the page in which the reference is within.
         for (size_t i = 0; i < pages; i++)
         {
             if (reg[i] == -1)
