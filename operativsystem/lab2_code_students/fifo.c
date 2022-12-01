@@ -31,26 +31,26 @@ int main(int argc, char const *argv[])
         int found = 0;
 
         int index = row / size; //Gives the page in which the reference is within.
-        for (size_t i = 0; i < pages; i++)
+        for (size_t i = 0; i < pages; i++) //iterates page_number amount of times
         {
-            if (reg[i] == -1)
+            if (reg[i] == -1) //If a slot is empty, increment page fault and store the page in said slot
             {
                 reg[i] = index;
                 pagefault++;
                 found = 1;
-                i = pages;
+                i = pages; //Ends the loop :)
             }
-            else if (reg[i] == index)
+            else if (reg[i] == index) //If a slot contains the sought after page, move to next reference.
             {
                 found = 1;
                 i = pages;
             }
         }
-        if (found == 0)
+        if (found == 0) //If the page is not found and all slots are taken, increment pagefault and use fifo_counter to replace the oldest entry.
         {
             reg[fifo_counter % pages] = index;
             pagefault++;
-            fifo_counter++;
+            fifo_counter++; //is incremented in order to keep track of pagefaults which occured through this manner.
         }
     }
     printf("%d pagefaults\n", pagefault);
