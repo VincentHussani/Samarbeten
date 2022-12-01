@@ -1,0 +1,1 @@
+To execute the notebook, make sure all libraries are installed and put the file spambase.data in the same folder as the notebook
