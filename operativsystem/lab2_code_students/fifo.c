@@ -2,55 +2,52 @@
 #include <stdlib.h>
 #include <string.h>
 int main(int argc, char const *argv[])
+
 {
     int pages;
     int size;
-
-    if (argc == 4) //If the correct amount of arguments are parsed in, then the program continues as normal
+    if (argc != 1)
     {
-        pages = atoi(argv[1]);//Stores and converts number of pages to an int
-        size = atoi(argv[2]); //Stores and converts page size to an int
+        char *page_tmp = argv[1];
+        pages = atoi(page_tmp);
+
+        char *size_tmp = argv[2];
+        size = atoi(size_tmp);
     }
-    else
-        exit(1);
 
-
-    FILE *f = fopen(argv[3], "r");
+    char *file = argv[3];
+    FILE *f = fopen(file, "r");
     char line[256];
 
-
-    int reg[pages]; //Stores the pages currently in use
-    memset(reg, -1, pages * 4); //All slots in reg are set to -1 in order to identify them as empty
+    int reg[pages];
+    memset(reg, -1, pages * 4);
     int pagefault = 0;
-    int fifo_counter = 0; // Is used to store which slot is the oldest entry.
-
-    while (fgets(line, sizeof(line), f))  //While there are rows to be grabbed this loop will continue
+    int fifo_counter = 0;
+    while (fgets(line, sizeof(line), f))
     {
-
-        int row = atoi(line); //converts the reference to an int
+        int row = atoi(line);
         int found = 0;
-
-        int index = row / size; //Gives the page in which the reference is within.
-        for (size_t i = 0; i < pages; i++) //iterates page_number amount of times
+        int index = row / size;
+        for (size_t i = 0; i < pages; i++)
         {
-            if (reg[i] == -1) //If a slot is empty, increment page fault and store the page in said slot
+            if (reg[i] == -1)
             {
                 reg[i] = index;
                 pagefault++;
                 found = 1;
-                i = pages; //Ends the loop :)
+                i = pages;
             }
-            else if (reg[i] == index) //If a slot contains the sought after page, move to next reference.
+            else if (reg[i] == index)
             {
                 found = 1;
                 i = pages;
             }
         }
-        if (found == 0) //If the page is not found and all slots are taken, increment pagefault and use fifo_counter to replace the oldest entry.
+        if (found == 0)
         {
             reg[fifo_counter % pages] = index;
             pagefault++;
-            fifo_counter++; //is incremented in order to keep track of pagefaults which occured through this manner.
+            fifo_counter++;
         }
     }
     printf("%d pagefaults\n", pagefault);

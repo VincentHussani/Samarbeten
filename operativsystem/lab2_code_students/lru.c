@@ -6,64 +6,65 @@ int main(int argc, char const *argv[])
 {
     int pages;
     int size;
-    if (argc == 4) //If the correct amount of arguments are parsed in, then the program continues as normal
+    if (argc != 1)
     {
-        pages = atoi(argv[1]);//Stores and converts number of pages to an int
-        size = atoi(argv[2]); //Stores and converts page size to an int
+        char *page_tmp = argv[1];
+        pages = atoi(page_tmp);
+
+        char *size_tmp = argv[2];
+        size = atoi(size_tmp);
     }
-    else
-        exit(1);
 
-
-    FILE *f = fopen(argv[3], "r");
+    char *file = argv[3];
+    FILE *f = fopen(file, "r");
     char line[256];
 
+    int reg[pages];
+    memset(reg, -1, pages * 4);
 
-    int reg[pages]; //stores all curently used pages
-    memset(reg, -1, pages * 4); //-1 = empty
+    int lru[pages];
+    memset(lru, 0, 4 * pages);
 
-    int lru[pages]; //Is used to keep track of how many references were read since a coressponding slot was last accessed
-    memset(lru, 0, 4 * pages); //get rid of potential junk
-
-    int count = 0; //Count is used to turn the while-loop into a for-loop of sorts.
-
+    int count = 0;
     int pagefault = 0;
-    while (fgets(line, sizeof(line), f)) //While there are references to grab, this while loop will continue.
+    while (fgets(line, sizeof(line), f))
     {
-        int row = atoi(line); //Converts the references to an int
+        int row = atoi(line);
         int found = 0;
-        int lowest = count; //Lowest is used to identify which slot has been accessed the least recently
-        int lowest_i = 0; //has the index of said slot
-        int index = (int)(row / size); //Gives the page of our reference
+        int lowest = count + 1;
+        int lowest_i = 0;
+        int index = (int)(row / size);
         for (size_t i = 0; i < pages; i++)
         {
-            if (reg[i] == -1) //If a slot is empty, occupy it and increment pagefault
+            if (reg[i] == -1)
             {
                 reg[i] = index;
                 pagefault++;
                 found = 1;
-                lru[i] = count; //updates the slot's last time accessed value
+                lru[i] = count;
                 i = pages;
+                count++;
             }
             else if (reg[i] == index)
             {
                 found = 1;
-                lru[i] = count; //Updates the slot's last time accessed value.
+                lru[i] = count;
                 i = pages;
+                count++;
             }
-            if (lowest > lru[i]) //Done to keep track of the least recently used incase a pagefault will occur
+            if (lowest > lru[i])
             {
                 lowest = lru[i];
                 lowest_i = i;
             }
         }
-        if (found == 0) //If no current slot is usable, replace the least recently used row
+        if (found == 0)
         {
             reg[lowest_i] = index;
             lru[lowest_i] = count;
+            count++;
             pagefault++;
         }
-        count++; //Incremented each time to store usage data.
     }
 
     printf("%d pagefaults\n", pagefault);

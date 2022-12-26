@@ -9,12 +9,18 @@
 #define FAT_BLOCK 1
 #define FAT_FREE 0
 #define FAT_EOF -1
-
 #define TYPE_FILE 0
 #define TYPE_DIR 1
 #define READ 0x04
 #define WRITE 0x02
 #define EXECUTE 0x01
+
+struct path_info
+{
+    int block;
+    std::string file_name;
+    uint8_t block_type;
+};
 
 struct dir_entry
 {
@@ -69,6 +75,8 @@ public:
     // chmod <accessrights> <filepath> changes the access rights for the
     // file <filepath> to <accessrights>.
     int chmod(std::string accessrights, std::string filepath);
+    path_info getpath(std::string filepath);
+    void updatesize(uint32_t size, int originblock);
 };
 
 #endif // __FS_H__
